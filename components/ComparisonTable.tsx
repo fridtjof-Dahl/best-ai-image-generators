@@ -1,79 +1,77 @@
 'use client'
 import AffiliateButton from './AffiliateButton'
 
-const tools = [
+interface Tool {
+  rank: number
+  name: string
+  quality: number
+  ease: number
+  speed: number
+  price: string
+  freeTier: boolean
+  bestFor: string
+  affiliate: string
+  trackingId: string
+}
+
+const tools: Tool[] = [
   {
     rank: 1,
     name: 'Midjourney v6',
-    emoji: '🏆',
     quality: 9.8,
-    ease: 7.5,
-    speed: 8.0,
-    price: '$10/mo',
-    freeOption: false,
-    bestFor: 'Artistic & professional',
-    badge: 'Best Overall',
-    badgeColor: 'bg-yellow-100 text-yellow-800 border border-yellow-200',
+    ease:    7.5,
+    speed:   8.0,
+    price:   '$10 / month',
+    freeTier: false,
+    bestFor:  'Artistic & editorial',
     affiliate: 'https://midjourney.com',
     trackingId: 'table_midjourney',
   },
   {
     rank: 2,
     name: 'DALL-E 3',
-    emoji: '🤖',
     quality: 9.2,
-    ease: 9.8,
-    speed: 8.5,
-    price: '$20/mo (ChatGPT+)',
-    freeOption: false,
-    bestFor: 'Ease of use & beginners',
-    badge: 'Easiest to Use',
-    badgeColor: 'bg-blue-100 text-blue-800 border border-blue-200',
+    ease:    9.8,
+    speed:   8.5,
+    price:   '$20 / month (ChatGPT Plus)',
+    freeTier: false,
+    bestFor:  'Prompt accuracy & ease',
     affiliate: 'https://openai.com/dall-e-3',
     trackingId: 'table_dalle3',
   },
   {
     rank: 3,
     name: 'Leonardo AI',
-    emoji: '🎨',
     quality: 8.8,
-    ease: 8.5,
-    speed: 9.0,
-    price: 'Free / $12/mo',
-    freeOption: true,
-    bestFor: 'Free users & game art',
-    badge: 'Best Free Option',
-    badgeColor: 'bg-green-100 text-green-800 border border-green-200',
+    ease:    8.5,
+    speed:   9.0,
+    price:   'Free — $12 / month',
+    freeTier: true,
+    bestFor:  'Free tier & game art',
     affiliate: 'https://leonardo.ai',
     trackingId: 'table_leonardo',
   },
   {
     rank: 4,
     name: 'Adobe Firefly',
-    emoji: '🔥',
     quality: 8.5,
-    ease: 9.2,
-    speed: 8.8,
-    price: 'Free / Adobe CC',
-    freeOption: true,
-    bestFor: 'Commercial safe images',
-    badge: 'Best for Business',
-    badgeColor: 'bg-purple-100 text-purple-800 border border-purple-200',
+    ease:    9.2,
+    speed:   8.8,
+    price:   'Free — Adobe CC bundle',
+    freeTier: true,
+    bestFor:  'Commercial-safe output',
     affiliate: 'https://firefly.adobe.com',
     trackingId: 'table_firefly',
   },
   {
     rank: 5,
     name: 'Stable Diffusion',
-    emoji: '💻',
     quality: 9.0,
-    ease: 4.5,
-    speed: 9.5,
-    price: 'Free (self-hosted)',
-    freeOption: true,
-    bestFor: 'Advanced users & unlimited',
-    badge: 'Best for Power Users',
-    badgeColor: 'bg-gray-100 text-gray-800 border border-gray-200',
+    ease:    4.5,
+    speed:   9.5,
+    price:   'Free (self-hosted)',
+    freeTier: true,
+    bestFor:  'Power users, unlimited',
     affiliate: 'https://stability.ai',
     trackingId: 'table_sd',
   },
@@ -81,70 +79,70 @@ const tools = [
 
 function ScoreBar({ score }: { score: number }) {
   return (
-    <div className="flex items-center gap-2">
-      <div className="flex-1 bg-gray-100 rounded-full h-2 min-w-[60px]">
+    <div className="flex items-center gap-2.5">
+      <div className="score-bar-track flex-1 min-w-[48px]">
         <div
-          className="bg-blue-600 h-2 rounded-full transition-all"
+          className="score-bar-fill"
           style={{ width: `${score * 10}%` }}
           aria-hidden="true"
         />
       </div>
-      <span className="text-sm font-semibold text-gray-700 w-8 text-right">{score}</span>
+      <span className="text-xs font-semibold text-stone-600 w-7 text-right tabular-nums">{score}</span>
     </div>
   )
 }
 
 export default function ComparisonTable() {
   return (
-    <div className="overflow-x-auto rounded-xl shadow-lg border border-gray-200">
-      <table className="min-w-full bg-white" role="table" aria-label="AI Image Generator Comparison">
+    <div className="overflow-x-auto border border-stone-200 bg-white" style={{ borderRadius: '2px' }}>
+      <table
+        className="data-table min-w-full"
+        role="table"
+        aria-label="AI Image Generator Comparison — ranked by overall quality score"
+      >
+        <caption className="sr-only">
+          Top 5 AI image generators compared by quality, ease of use, speed, and price
+        </caption>
         <thead>
-          <tr className="bg-blue-900 text-white">
-            <th scope="col" className="px-4 py-4 text-left text-sm font-bold">#</th>
-            <th scope="col" className="px-4 py-4 text-left text-sm font-bold">Tool</th>
-            <th scope="col" className="px-4 py-4 text-left text-sm font-bold hidden sm:table-cell">Quality</th>
-            <th scope="col" className="px-4 py-4 text-left text-sm font-bold hidden md:table-cell">Ease</th>
-            <th scope="col" className="px-4 py-4 text-left text-sm font-bold hidden lg:table-cell">Speed</th>
-            <th scope="col" className="px-4 py-4 text-left text-sm font-bold">Price</th>
-            <th scope="col" className="px-4 py-4 text-left text-sm font-bold hidden md:table-cell">Best For</th>
-            <th scope="col" className="px-4 py-4 text-center text-sm font-bold">Try It</th>
+          <tr>
+            <th scope="col" className="w-10">#</th>
+            <th scope="col">Tool</th>
+            <th scope="col" className="hidden sm:table-cell min-w-[120px]">Quality</th>
+            <th scope="col" className="hidden md:table-cell min-w-[120px]">Ease of Use</th>
+            <th scope="col" className="hidden lg:table-cell min-w-[120px]">Speed</th>
+            <th scope="col" className="hidden sm:table-cell">Price</th>
+            <th scope="col" className="hidden md:table-cell">Best For</th>
+            <th scope="col" className="text-center w-28">Try</th>
           </tr>
         </thead>
         <tbody>
-          {tools.map((tool, index) => (
+          {tools.map((tool) => (
             <tr
               key={tool.name}
-              className={`border-b border-gray-100 hover:bg-blue-50 transition-colors ${tool.rank === 1 ? 'bg-yellow-50' : ''}`}
+              className={tool.rank === 1 ? 'bg-stone-50' : ''}
             >
-              <td className="px-4 py-4 text-center">
-                <span className="text-xl" aria-label={`Rank ${tool.rank}`}>{tool.emoji}</span>
+              <td className="text-stone-400 font-mono text-xs font-medium">{tool.rank}</td>
+              <td>
+                <div className="flex flex-col gap-1">
+                  <span className="font-semibold text-navy-900 text-sm">{tool.name}</span>
+                  {tool.freeTier && (
+                    <span className="label-green text-xs inline-flex w-fit">Free tier</span>
+                  )}
+                </div>
               </td>
-              <td className="px-4 py-4">
-                <div className="font-bold text-gray-900 text-sm">{tool.name}</div>
-                <span className={`badge text-xs mt-1 ${tool.badgeColor}`}>{tool.badge}</span>
-                {tool.freeOption && (
-                  <span className="block mt-1 text-xs text-green-600 font-medium">✓ Free tier</span>
-                )}
-              </td>
-              <td className="px-4 py-4 hidden sm:table-cell">
-                <ScoreBar score={tool.quality} />
-              </td>
-              <td className="px-4 py-4 hidden md:table-cell">
-                <ScoreBar score={tool.ease} />
-              </td>
-              <td className="px-4 py-4 hidden lg:table-cell">
-                <ScoreBar score={tool.speed} />
-              </td>
-              <td className="px-4 py-4 text-sm text-gray-700 font-medium">{tool.price}</td>
-              <td className="px-4 py-4 hidden md:table-cell text-sm text-gray-600">{tool.bestFor}</td>
-              <td className="px-4 py-4 text-center">
+              <td className="hidden sm:table-cell"><ScoreBar score={tool.quality} /></td>
+              <td className="hidden md:table-cell"><ScoreBar score={tool.ease} /></td>
+              <td className="hidden lg:table-cell"><ScoreBar score={tool.speed} /></td>
+              <td className="hidden sm:table-cell text-xs text-stone-600 whitespace-nowrap">{tool.price}</td>
+              <td className="hidden md:table-cell text-xs text-stone-500">{tool.bestFor}</td>
+              <td className="text-center">
                 <AffiliateButton
                   href={tool.affiliate}
                   trackingId={tool.trackingId}
                   toolName={tool.name}
-                  className="inline-flex items-center justify-center px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold rounded-lg transition-all duration-200 whitespace-nowrap shadow hover:shadow-md"
+                  className="btn-primary text-xs px-4 py-1.5 whitespace-nowrap"
                 >
-                  Try Free →
+                  Visit
                 </AffiliateButton>
               </td>
             </tr>

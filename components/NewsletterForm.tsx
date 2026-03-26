@@ -3,75 +3,74 @@ import { useState } from 'react'
 
 export default function NewsletterForm() {
   const [email, setEmail] = useState('')
-  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email) return
-    setStatus('loading')
+    setError('')
 
-    // GA4: Track email signup conversion
-    if (typeof window !== 'undefined' && (window as any).trackEvent) {
-      (window as any).trackEvent('email_signup', {
-        event_category: 'conversion',
-        event_label: 'newsletter',
-        // value: 5, // optional lead value for ROAS tracking
-      })
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError('Please enter a valid email address.')
+      return
     }
 
-    // TODO: Replace with your actual email service (Mailchimp, ConvertKit, etc.)
-    // Example for Mailchimp:
-    // await fetch('/api/subscribe', { method: 'POST', body: JSON.stringify({ email }) })
-    
-    // Simulated success for now
-    await new Promise(res => setTimeout(res, 800))
-    setStatus('success')
-    setEmail('')
+    setLoading(true)
+
+    // Track via GA4
+    if (typeof window !== 'undefined' && (window as any).trackEvent) {
+      (window as any).trackEvent('newsletter_signup', { location: 'homepage_newsletter' })
+    }
+
+    await new Promise((r) => setTimeout(r, 600))
+    setLoading(false)
+    setSubmitted(true)
   }
 
-  if (status === 'success') {
+  if (submitted) {
     return (
-      <div className="bg-green-500 bg-opacity-20 border border-green-400 rounded-xl p-6 text-center">
-        <div className="text-3xl mb-2">✅</div>
-        <p className="text-green-200 font-semibold text-lg">You&apos;re in!</p>
-        <p className="text-green-300 text-sm mt-1">Check your inbox to confirm your subscription.</p>
+      <div className="border border-stone-600 bg-navy-800 p-5 text-center">
+        <p className="text-white text-sm font-medium">Subscribed.</p>
+        <p className="text-stone-400 text-xs mt-1">
+          We will notify you when new quarterly results are published.
+        </p>
       </div>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" noValidate>
-      <label htmlFor="newsletter-email" className="sr-only">Email address</label>
-      <input
-        id="newsletter-email"
-        type="email"
-        value={email}
-        onChange={e => setEmail(e.target.value)}
-        placeholder="Enter your email address"
-        required
-        autoComplete="email"
-        className="flex-1 px-4 py-3 rounded-lg text-gray-900 bg-white border border-blue-600 focus:outline-none focus:ring-2 focus:ring-orange-400 placeholder-gray-400"
-        aria-label="Email address for newsletter"
-        disabled={status === 'loading'}
-      />
-      <button
-        type="submit"
-        disabled={status === 'loading' || !email}
-        className="btn-primary whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
-        aria-label="Subscribe to newsletter"
-      >
-        {status === 'loading' ? (
-          <span className="flex items-center gap-2">
-            <svg className="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24" aria-hidden="true">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-            </svg>
-            Subscribing...
-          </span>
-        ) : (
-          '📧 Subscribe Free'
-        )}
-      </button>
+    <form onSubmit={handleSubmit} noValidate aria-label="Newsletter subscription">
+      <div className="flex flex-col sm:flex-row gap-3">
+        <div className="flex-1">
+          <label htmlFor="newsletter-email" className="sr-only">Email address</label>
+          <input
+            id="newsletter-email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="your@email.com"
+            className="w-full px-4 py-3 bg-navy-800 border border-stone-600 text-white placeholder-stone-400 text-sm focus:outline-none focus:border-stone-400 transition-colors"
+            style={{ borderRadius: '2px' }}
+            autoComplete="email"
+            required
+            aria-required="true"
+            aria-describedby={error ? 'newsletter-error' : undefined}
+          />
+        </div>
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn-cta text-sm px-6 py-3 whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
+        >
+          {loading ? 'Subscribing...' : 'Subscribe'}
+        </button>
+      </div>
+      {error && (
+        <p id="newsletter-error" role="alert" className="mt-2 text-xs text-red-400">
+          {error}
+        </p>
+      )}
     </form>
   )
 }
