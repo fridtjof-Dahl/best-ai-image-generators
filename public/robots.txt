@@ -1,3 +1,15 @@
 User-agent: *
 Allow: /
+
+# Sitemaps
 Sitemap: https://best-ai-image-generators.com/sitemap.xml
+
+# Block common bots that don't respect robots.txt anyway
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
